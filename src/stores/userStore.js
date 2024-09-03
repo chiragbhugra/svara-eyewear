@@ -1,24 +1,21 @@
-import create, { createStore } from 'zustand';
+import { create } from 'zustand';
 import { supabase } from '../supabaseClient';
 
-const useUserStore = createStore((set) => ({
+const useUserStore = create((set) => ({
   user: null,
-  loading: false,
   setUser: (user) => set({ user }),
-  clearUser: () => set({ user: null }),
   login: async (email, password) => {
-    set({ loading: true });
-    const { user, error } = await supabase.auth.signIn({ email, password });
-    if (error) {
-      console.error('Login error:', error);
-    } else {
-      set({ user });
-    }
-    set({ loading: false });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    set({ user: data.user });
   },
   logout: async () => {
     await supabase.auth.signOut();
     set({ user: null });
+  },
+  checkUser: async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    set({ user });
   },
 }));
 

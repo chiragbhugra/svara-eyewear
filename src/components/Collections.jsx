@@ -31,11 +31,11 @@ const Collections = () => {
     }, [loading, fetchEyewear]);
 
     if (loading && eyewear.length === 0) {
-        return <div>Loading collections...</div>;
+        return <div className="text-center mt-8">Loading collections...</div>;
     }
 
     if (error) {
-        return <div>Error loading collections: {error}</div>;
+        return <div className="text-center mt-8 text-red-500">Error loading collections: {error}</div>;
     }
 
     return (
