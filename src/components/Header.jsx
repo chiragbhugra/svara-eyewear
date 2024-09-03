@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaUser, FaHeart, FaSearch, FaShoppingCart } from 'react-icons/fa';
 import useEyewearStore from '../stores/eyewearStore';
+import useCartStore from '../stores/cartStore';
 
 const navItems = [
   { name: 'Eyeglasses', path: '/eyeglasses' },
@@ -14,6 +15,7 @@ const navItems = [
 const Header = () => {
   const navigate = useNavigate();
   const { fetchEyewear } = useEyewearStore();
+  const cartItemsCount = useCartStore(state => state.getCartItemsCount());
 
   const handleEyewearClick = async () => {
     await fetchEyewear();
@@ -44,7 +46,14 @@ const Header = () => {
           <Link to="/profile"><FaUser /></Link>
           <Link to="/favorites"><FaHeart /></Link>
           <Link to="/search"><FaSearch /></Link>
-          <Link to="/cart"><FaShoppingCart /></Link>
+          <Link to="/cart" className="relative">
+            <FaShoppingCart />
+            {cartItemsCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                {cartItemsCount}
+              </span>
+            )}
+          </Link>
         </div>
       </div>
     </header>

@@ -32,6 +32,11 @@ const useEyewearStore = create((set, get) => ({
     }
   },
 
+  getProductById: (productId) => {
+    const [name, index] = productId.split('-');
+    return get().eyewear[parseInt(index, 10)];
+  },
+
   // Function to increment the current page
   nextPage: () => set((state) => ({ currentPage: state.currentPage + 1 })),
 }));

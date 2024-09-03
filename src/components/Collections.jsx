@@ -42,10 +42,13 @@ const Collections = () => {
        <>
         <FilterComponent/>
         <div className="container mx-auto pt-6">
-            
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {eyewear.map((product, index) => (
-                    <ProductCard key={index} product={product} index={index} />
+                    <ProductCard 
+                        key={`${product.title}-${index}`} 
+                        product={product} 
+                        index={index} 
+                    />
                 ))}
             </div>
             <div ref={observerRef} className="h-10" /> {/* Empty div for the observer */}
