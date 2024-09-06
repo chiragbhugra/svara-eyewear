@@ -8,7 +8,9 @@ export default function Account({ session }) {
   const [avatar_url, setAvatarUrl] = useState(null)
 
   useEffect(() => {
-    getProfile()
+    if (session?.user) {
+      getProfile()
+    }
   }, [session])
 
   async function getProfile() {
@@ -61,6 +63,10 @@ export default function Account({ session }) {
     } finally {
       setLoading(false)
     }
+  }
+
+  if (!session) {
+    return <div>Please sign in to view this page.</div>
   }
 
   return (

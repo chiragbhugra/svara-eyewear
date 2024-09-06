@@ -1,47 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import { Auth } from '@supabase/auth-ui-react';
+import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { supabase } from '../supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import useUserStore from '../stores/userStore';
 
-export default function Auth() {
-  const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function AuthComponent() {
   const navigate = useNavigate();
+  const user = useUserStore(state => state.user);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      alert(error.message);
-    } else {
+  useEffect(() => {
+    if (user) {
       navigate('/');
     }
-    setLoading(false);
-  };
+  }, [user, navigate]);
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <form onSubmit={handleLogin} className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 mb-4 border rounded"
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 py-24">
+      <div className="w-full max-w-md">
+        <Auth
+          supabaseClient={supabase}
+          appearance={{ theme: ThemeSupa }}
+          providers={['google', 'github']}
+          redirectTo={`${window.location.origin}/auth/callback`}
         />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-2 mb-6 border rounded"
-        />
-        <button type="submit" disabled={loading} className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-          {loading ? 'Loading...' : 'Log In'}
-        </button>
-      </form>
+      </div>
     </div>
   );
 }

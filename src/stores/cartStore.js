@@ -3,7 +3,7 @@ import { create } from 'zustand';
 const useCartStore = create((set, get) => ({
   cart: [],
   addToCart: (product) => set((state) => {
-    console.log("Product being added to cart:", product);
+    // console.log("Product being added to cart:", product);
     return { cart: [...state.cart, { ...product, quantity: 1 }] };
   }),
   removeFromCart: (productId, index) => set((state) => ({

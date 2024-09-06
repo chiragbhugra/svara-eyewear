@@ -10,12 +10,18 @@ const useUserStore = create((set) => ({
     set({ user: data.user });
   },
   logout: async () => {
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
     set({ user: null });
   },
   checkUser: async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    set({ user });
+    const { data: { session } } = await supabase.auth.getSession();
+    set({ user: session?.user || null });
+  },
+  signup: async (email, password) => {
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) throw error;
+    return data;
   },
 }));
 

@@ -11,8 +11,12 @@ const Header = () => {
   const cartItemsCount = useCartStore(state => state.getCartItemsCount());
 
   const handleLogout = async () => {
-    await logout();
-    navigate('/');
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Error logging out:', error.message);
+    }
   };
 
   return (
@@ -26,20 +30,20 @@ const Header = () => {
           </ul>
         </nav>
         <div className="flex space-x-4">
-          {user ? (
+          {!user ? (
+            <Link to="/auth">Login</Link>
+          ) : (
             <>
-              <Link to="/account"><FaUser /></Link>
+              <Link to="/account">Account</Link>
               <button onClick={handleLogout}>Logout</button>
             </>
-          ) : (
-            <Link to="/login">Login</Link>
           )}
           <Link to="/favorites"><FaHeart /></Link>
           <Link to="/search"><FaSearch /></Link>
           <Link to="/cart" className="relative">
             <FaShoppingCart />
             {cartItemsCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
                 {cartItemsCount}
               </span>
             )}
