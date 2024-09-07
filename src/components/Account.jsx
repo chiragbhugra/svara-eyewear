@@ -1,71 +1,39 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
+import { useUserStore } from '../stores/userStore'
 
-export default function Account({ session }) {
+export default function Account() {
   const [loading, setLoading] = useState(true)
   const [username, setUsername] = useState(null)
   const [website, setWebsite] = useState(null)
   const [avatar_url, setAvatarUrl] = useState(null)
+  const user = useUserStore(state => state.user)
 
   useEffect(() => {
-    if (session?.user) {
+    if (user) {
       getProfile()
     }
-  }, [session])
+  }, [user])
 
   async function getProfile() {
-    try {
-      setLoading(true)
-      const { user } = session
-
-      let { data, error, status } = await supabase
-        .from('profiles')
-        .select(`username, website, avatar_url`)
-        .eq('id', user.id)
-        .single()
-
-      if (error && status !== 406) {
-        throw error
-      }
-
-      if (data) {
-        setUsername(data.username)
-        setWebsite(data.website)
-        setAvatarUrl(data.avatar_url)
-      }
-    } catch (error) {
-      alert(error.message)
-    } finally {
-      setLoading(false)
-    }
+    setLoading(true);
+    // Simulate fetching profile data
+    setUsername(user.email);
+    setWebsite('');
+    setAvatarUrl('');
+    setLoading(false);
   }
 
   async function updateProfile({ username, website, avatar_url }) {
-    try {
-      setLoading(true)
-      const { user } = session
-
-      const updates = {
-        id: user.id,
-        username,
-        website,
-        avatar_url,
-        updated_at: new Date(),
-      }
-
-      let { error } = await supabase.from('profiles').upsert(updates)
-
-      if (error) {
-        throw error
-      }
-    } catch (error) {
-      alert(error.message)
-    } finally {
-      setLoading(false)
-    }
+    setLoading(true);
+    // Simulate updating profile
+    setUsername(username);
+    setWebsite(website);
+    setAvatarUrl(avatar_url);
+    setLoading(false);
   }
 
-  if (!session) {
+  if (!user) {
     return <div>Please sign in to view this page.</div>
   }
 
@@ -73,7 +41,7 @@ export default function Account({ session }) {
     <div className="form-widget">
       <div>
         <label htmlFor="email">Email</label>
-        <input id="email" type="text" value={session.user.email} disabled />
+        <input id="email" type="text" value={user.email} disabled />
       </div>
       <div>
         <label htmlFor="username">Name</label>

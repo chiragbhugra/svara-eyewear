@@ -20,13 +20,17 @@ const useEyewearStore = create((set, get) => ({
 
     try {
       const response = await axios.get(`${baseUrl}?${params.toString()}`);
-      set((state) => ({
-        eyewear: [...state.eyewear, ...response.data.data.products],
-        currentPage: state.currentPage + 1, // Increment the current page
-      }));
+      if (response.data && response.data.data && response.data.data.products) {
+        set((state) => ({
+          eyewear: [...state.eyewear, ...response.data.data.products],
+          currentPage: state.currentPage + 1,
+        }));
+      } else {
+        throw new Error('Invalid response structure');
+      }
     } catch (error) {
       console.error('Fetch eyewear error:', error);
-      set({ error: error.response ? error.response.data.message : 'Failed to fetch eyewear' });
+      set({ error: error.message || 'Failed to fetch eyewear' });
     } finally {
       set({ loading: false });
     }
@@ -37,7 +41,6 @@ const useEyewearStore = create((set, get) => ({
     return get().eyewear[parseInt(index, 10)];
   },
 
-  // Function to increment the current page
   nextPage: () => set((state) => ({ currentPage: state.currentPage + 1 })),
 }));
 

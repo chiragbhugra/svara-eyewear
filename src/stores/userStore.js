@@ -1,27 +1,18 @@
 import { create } from 'zustand';
-import { supabase } from '../supabaseClient';
 
 const useUserStore = create((set) => ({
   user: null,
   setUser: (user) => set({ user }),
-  login: async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
-    set({ user: data.user });
+  login: (email, password) => {
+    // Simulate login without database
+    set({ user: { email, id: Date.now().toString() } });
   },
-  logout: async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+  logout: () => {
     set({ user: null });
   },
-  checkUser: async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    set({ user: session?.user || null });
-  },
-  signup: async (email, password) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) throw error;
-    return data;
+  signup: (email, password) => {
+    // Simulate signup without database
+    return { user: { email, id: Date.now().toString() } };
   },
 }));
 

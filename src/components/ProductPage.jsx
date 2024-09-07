@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import useEyewearStore from '../stores/eyewearStore';
 import useCartStore from '../stores/cartStore';
 import { FaHeart, FaShareAlt } from 'react-icons/fa';
+import useUserStore from '../stores/userStore';
+import { supabase } from '../supabaseClient';
 
 const ProductPage = () => {
     const { productId } = useParams();
     const { eyewear, fetchEyewear } = useEyewearStore();
     const addToCart = useCartStore(state => state.addToCart);
     const [product, setProduct] = useState(null);
+    const user = useUserStore(state => state.user);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (eyewear.length === 0) {
@@ -42,8 +46,8 @@ const ProductPage = () => {
     } = product;
 
     const handleAddToCart = () => {
-        console.log("Product being added to cart:", { id, name, price, images });
-        addToCart({ id, name, price, images });
+        addToCart(product);
+        alert("Product added to cart successfully!");
     };
 
     return (

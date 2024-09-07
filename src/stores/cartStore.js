@@ -2,27 +2,56 @@ import { create } from 'zustand';
 
 const useCartStore = create((set, get) => ({
   cart: [],
-  addToCart: (product) => set((state) => {
-    // console.log("Product being added to cart:", product);
-    return { cart: [...state.cart, { ...product, quantity: 1 }] };
-  }),
-  removeFromCart: (productId, index) => set((state) => ({
-    cart: state.cart.filter((item, i) => i !== index || item.id !== productId),
-  })),
-  updateQuantity: (productId, index, quantity) => set((state) => ({
-    cart: state.cart.map((item, i) => 
-      i === index && item.id === productId ? { ...item, quantity } : item
-    )
-  })),
-  clearCart: () => set({ cart: [] }),
-  getCartTotal: () => {
-    const { cart } = get();
-    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  discount: 0,
+
+  addToCart: (item) => {
+    set((state) => {
+      const existingItem = state.cart.find(cartItem => cartItem.id === item.id);
+      if (existingItem) {
+        return {
+          cart: state.cart.map(cartItem =>
+            cartItem.id === item.id
+              ? { ...cartItem, quantity: cartItem.quantity + 1 }
+              : cartItem
+          )
+        };
+      } else {
+        return {
+          cart: [...state.cart, { ...item, quantity: 1 }]
+        };
+      }
+    });
   },
+
+  fetchCart: () => {
+    // This function is no longer needed, but we'll keep it empty for compatibility
+  },
+
   getCartItemsCount: () => {
-    const { cart } = get();
-    return cart.reduce((total, item) => total + item.quantity, 0);
+    return get().cart.reduce((total, item) => total + item.quantity, 0);
   },
+
+  removeFromCart: (productId) => {
+    set((state) => ({
+      cart: state.cart.filter(item => item.id !== productId)
+    }));
+  },
+
+  updateQuantity: (productId, newQuantity) => {
+    set((state) => ({
+      cart: state.cart.map(item =>
+        item.id === productId ? { ...item, quantity: newQuantity } : item
+      )
+    }));
+  },
+
+  getCartSubtotal: () => {
+    return get().cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  },
+
+  applyDiscount: (discountPercentage) => {
+    set({ discount: discountPercentage });
+  }
 }));
 
 export default useCartStore;

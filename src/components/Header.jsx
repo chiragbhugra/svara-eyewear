@@ -1,42 +1,28 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FaUser, FaHeart, FaSearch, FaShoppingCart } from 'react-icons/fa';
 import useUserStore from '../stores/userStore';
 import useCartStore from '../stores/cartStore';
 
 const Header = () => {
-  const navigate = useNavigate();
   const user = useUserStore(state => state.user);
   const logout = useUserStore(state => state.logout);
   const cartItemsCount = useCartStore(state => state.getCartItemsCount());
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate('/');
-    } catch (error) {
-      console.error('Error logging out:', error.message);
-    }
-  };
-
   return (
     <header className="bg-white shadow fixed top-0 left-0 w-full z-50">
-      <div className="container mx-auto p-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">JOHN JACOBS</h1>
-        <nav>
-          <ul className="flex space-x-4">
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/eyeglasses">Eyeglasses</Link></li>
-          </ul>
-        </nav>
-        <div className="flex space-x-4">
-          {!user ? (
-            <Link to="/auth">Login</Link>
-          ) : (
+      <div className="container mx-auto p-4 flex flex-wrap justify-between items-center">
+        <Link to="/" className="text-2xl font-bold">EyeWear</Link>
+        <nav className="flex items-center space-x-4 mt-4 md:mt-0">
+          <Link to="/eyeglasses" className="hidden md:inline">Eyeglasses</Link>
+          <Link to="/sunglasses" className="hidden md:inline">Sunglasses</Link>
+          {user ? (
             <>
-              <Link to="/account">Account</Link>
-              <button onClick={handleLogout}>Logout</button>
+              <Link to="/account"><FaUser /></Link>
+              <button onClick={logout}>Logout</button>
             </>
+          ) : (
+            <Link to="/auth">Login</Link>
           )}
           <Link to="/favorites"><FaHeart /></Link>
           <Link to="/search"><FaSearch /></Link>
@@ -48,10 +34,10 @@ const Header = () => {
               </span>
             )}
           </Link>
-        </div>
+        </nav>
       </div>
     </header>
   );
-};
+}
 
 export default Header;
